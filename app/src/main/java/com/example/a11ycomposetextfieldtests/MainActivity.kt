@@ -242,7 +242,7 @@ fun NamePasswordPair() {
 
 
         Text(
-            text = "The next field uses only IME modifiers and absorb all keyboard input. It is a keyboard trap. Use the touchscreen or Switch Access to exit the field.",
+            text = "The next field uses only IME modifiers and absorbs all keyboard input. It is a keyboard trap. Use the touchscreen or Switch Access to exit the field.",
             modifier = Modifier
                 .padding(vertical = 8.dp)
                 .fillMaxWidth(),
