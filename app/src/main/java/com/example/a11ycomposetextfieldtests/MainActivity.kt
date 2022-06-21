@@ -64,6 +64,7 @@ fun NamePasswordPair() {
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
     val name = remember { mutableStateOf("")}
+    val nickname = remember { mutableStateOf("")}
     val password = remember { mutableStateOf("")}
 
     Column (
@@ -82,17 +83,17 @@ fun NamePasswordPair() {
                 .fillMaxWidth(),
             style = TextStyle(fontSize = 14.sp),
         )
-        // Username Field
+
+        // Full name Field
         TextField(
             value = name.value,
             onValueChange = { name.value = it },
             modifier = Modifier
-                .padding(vertical = 8.dp)
                 .fillMaxWidth()
                 .onPreviewKeyEvent { keyEvent ->
                     // A forward tab from a prior non-TextField (either no initial focus or from
-                    // the Submit button) or a back tab from the following TextField will cause this
-                    // field to be skipped over. Enter causes onDone() to be called twice.
+                    // the Submit button) or a back tab from the following TextField will skip over
+                    // this field. The Enter key pressed on this field causes onDone() to be called twice.
                     if (keyEvent.key == Key.Tab) {
                         if (keyEvent.nativeKeyEvent.isShiftPressed) {
                             focusManager.moveFocus(FocusDirection.Previous)
@@ -101,12 +102,12 @@ fun NamePasswordPair() {
                         }
                         true
                     } else if (keyEvent.key == Key.Enter || keyEvent.key == Key.NumPadEnter) {
-                        onDone(context, name.value, password.value)
+                        onDone(context, name.value, nickname.value, password.value)
                         true
                     } else {
                         false
                     }
-                    // The following code is exactly as recommended -- and doesn't work either.
+                    // The original recommended code. It doesn't work either.
 //                    if (keyEvent.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_TAB) {
 //                        focusManager.moveFocus(FocusDirection.Next)
 //                        true
@@ -115,10 +116,58 @@ fun NamePasswordPair() {
 //                    }
                 },
             label = {
-                Text(text = "Enter your username")
+                Text(text = "Enter your full name")
             },
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = {
+                    // Pressing Ime button would move the text indicator's focus to the bottom
+                    // field, if it exists!
+                    focusManager.moveFocus(FocusDirection.Next)
+                }
+            )
+        )
+
+        // Nickname Field
+        TextField(
+            value = nickname.value,
+            onValueChange = { nickname.value = it },
+            modifier = Modifier
+                .padding(vertical = 8.dp)
+                .fillMaxWidth()
+                .onPreviewKeyEvent { keyEvent ->
+                    // A forward tab from the prior TextField will skip over this field, as will a
+                    // back tab from the follow TextField. A forward tab from before the prior
+                    // TextField or a back tab from after the next TextField will land here.
+                    // The Enter key pressed on this field causes onDone() to be called twice.
+                    if (keyEvent.key == Key.Tab) {
+                        if (keyEvent.nativeKeyEvent.isShiftPressed) {
+                            focusManager.moveFocus(FocusDirection.Previous)
+                        } else {
+                            focusManager.moveFocus(FocusDirection.Next)
+                        }
+                        true
+                    } else if (keyEvent.key == Key.Enter || keyEvent.key == Key.NumPadEnter) {
+                        onDone(context, name.value, nickname.value, password.value)
+                        true
+                    } else {
+                        false
+                    }
+                    // The original recommended code. It doesn't work either.
+//                    if (keyEvent.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_TAB) {
+//                        focusManager.moveFocus(FocusDirection.Next)
+//                        true
+//                    } else {
+//                        false
+//                    }
+                },
+            label = {
+                Text(text = "Enter your nickname")
+            },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(
                 onNext = {
@@ -136,9 +185,10 @@ fun NamePasswordPair() {
             modifier = Modifier
                 .fillMaxWidth()
                 .onPreviewKeyEvent { keyEvent ->
-                    // A a forward tab from the prior TextField will cause this field to be skipped
-                    // over, as will a back tab from a later non-input field (the Submit button).
-                    // Enter causes onDone() to be called twice.
+                    // A forward tab from the prior TextField will skip over this field, as will a
+                    // back tab from a later non-input field (the Submit button). A forward tab from
+                    // the first TextField will land on this field, having skipped the middle TextField.
+                    // The Enter key pressed on this field causes onDone() to be called twice.
                     if (keyEvent.key == Key.Tab) {
                         if (keyEvent.nativeKeyEvent.isShiftPressed) {
                             focusManager.moveFocus(FocusDirection.Previous)
@@ -147,12 +197,12 @@ fun NamePasswordPair() {
                         }
                         true
                     } else if (keyEvent.key == Key.Enter || keyEvent.key == Key.NumPadEnter) {
-                        onDone(context, name.value, password.value)
+                        onDone(context, name.value, nickname.value, password.value)
                         true
                     } else {
                         false
                     }
-                    // The following code is exactly as recommended -- and doesn't work either.
+                    // The original recommended code. It doesn't work either.
 //                    if (keyEvent.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_TAB) {
 //                        focusManager.moveFocus(FocusDirection.Next)
 //                        true
@@ -168,14 +218,14 @@ fun NamePasswordPair() {
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    onDone(context, name.value, password.value)
+                    onDone(context, name.value, nickname.value, password.value)
                 }
             )
         )
 
         Button(
             onClick = {
-                onDone(context, name.value, password.value)
+                onDone(context, name.value, nickname.value, password.value)
             }
         ) {
             Text(text = "Submit")
@@ -186,11 +236,12 @@ fun NamePasswordPair() {
 private fun onDone(
     context: Context,
     name: String,
+    nickname: String,
     password: String
 ) {
     Toast.makeText(
         context,
-        "Username: '${name}'; Password: '${password}' entered",
+        "Username: '${name}'; Nickname: '${nickname}' Password: '${password}' entered",
         Toast.LENGTH_SHORT
     ).show()
 }
