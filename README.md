@@ -6,7 +6,6 @@ Unfortunately, these methods don't eliminate the problem that TextFields eat Tab
 adding them to the TextField's value, as demonstrated by this project.
 
 
-
 ![Screenshot_20220313-104816 A11yComposeTextFieldTests 3](https://user-images.githubusercontent.com/85311885/158065264-0f489e61-055d-4f2b-ae42-828715e4cdea.png)
 
 Adopting the Modifier.onPreviewKeyEvent() technique suggested by 
@@ -26,3 +25,5 @@ but would result in the Tab or Enter being absorbed by the TextField in which it
 in addition to triggering focus change.
 
 More research is required, as is testing with newer versions of Compose.
+
+![Screenshot_20220621-134430 A11yComposeTextFieldTests 4](https://user-images.githubusercontent.com/85311885/174866717-17375de3-afaf-4a5e-8256-e9befd1d25a0.png)
