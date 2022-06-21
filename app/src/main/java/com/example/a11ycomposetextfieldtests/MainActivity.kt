@@ -63,6 +63,8 @@ class MainActivity : ComponentActivity() {
 fun NamePasswordPair() {
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
+    val name0 = remember { mutableStateOf("")}
+    val password0 = remember { mutableStateOf("")}
     val name = remember { mutableStateOf("")}
     val nickname = remember { mutableStateOf("")}
     val password = remember { mutableStateOf("")}
@@ -78,6 +80,13 @@ fun NamePasswordPair() {
         )
         Text(
             text = "Try to use an external keyboard to shift focus from one text field to the other with Tab or to submit the form with Enter.",
+            modifier = Modifier
+                .padding(vertical = 8.dp)
+                .fillMaxWidth(),
+            style = TextStyle(fontSize = 14.sp),
+        )
+        Text(
+            text = "The following three fields use the onPreviewKeyEvent modifier. They do not absorb Tab or Enter characters, but exhibit improper focus management behavior when those keys are pressed.",
             modifier = Modifier
                 .padding(vertical = 8.dp)
                 .fillMaxWidth(),
@@ -230,6 +239,37 @@ fun NamePasswordPair() {
         ) {
             Text(text = "Submit")
         }
+
+
+        Text(
+            text = "The next field uses only IME modifiers and absorb all keyboard input. It is a keyboard trap. Use the touchscreen or Switch Access to exit the field.",
+            modifier = Modifier
+                .padding(vertical = 8.dp)
+                .fillMaxWidth(),
+            style = TextStyle(fontSize = 14.sp),
+        )
+
+        // Full name Field
+        TextField(
+            value = name0.value,
+            onValueChange = { name0.value = it },
+            modifier = Modifier
+                .fillMaxWidth(),
+            label = {
+                Text(text = "It's a trap!")
+            },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = {
+                    // Pressing Ime button would move the text indicator's focus to the bottom
+                    // field, if it exists!
+                    focusManager.moveFocus(FocusDirection.Next)
+                }
+            )
+        )
+
     }
 }
 
